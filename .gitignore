@@ -1,0 +1,36 @@
+cat > .gitignore <<'EOF'
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+env/
+venv/
+.venv/
+.Python
+
+# Django
+*.sqlite3
+db.sqlite3
+/staticfiles
+/media
+
+# IDEs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Environment / secrets
+.env
+.env.*
+secrets.json
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build tools
+.python-version
+poetry.lock
+EOF
