@@ -1,0 +1,45 @@
+{% extends 'myapp/base.html' %}
+
+{% block content %}
+  {% if error %}
+    <p style="color:crimson">Error: {{ error }}</p>
+  {% endif %}
+
+  {% if album %}
+    <div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:18px">
+      {% if album.image %}
+        <img src="{{ album.image }}" alt="{{ album.name }}" style="width:220px;height:220px;object-fit:cover;border-radius:8px">
+      {% endif %}
+      <div>
+        <h2 style="margin:0">{{ album.name }}</h2>
+        <p style="margin:6px 0 0 0"><strong>Artist:</strong> {{ album.artist }}</p>
+        <p style="margin:4px 0 0 0"><strong>Release date:</strong> {{ album.release_date }}</p>
+        <p style="margin:4px 0 0 0"><strong>Total tracks:</strong> {{ album.total_tracks }}</p>
+
+        <p style="margin-top:12px">
+          <a href="#" onclick="alert('Ranking UI coming soon');return false;"
+             style="padding:8px 12px;background:#111;color:#fff;border-radius:6px;text-decoration:none">Start ranking</a>
+        </p>
+      </div>
+    </div>
+
+    <hr style="margin:18px 0">
+
+  <h3>Tracklist</h3>
+    <div style="margin-top:10px">
+  {% for t in tracks %}
+    <div style="margin:6px 0; display:flex; align-items:center;">
+      <span style="width:30px; text-align:right; font-weight:bold; margin-right:8px;">
+        {{ t.track_number }}.
+      </span>
+      <span>{{ t.name }}</span>
+      <span style="color:#666; margin-left:8px;">— {{ t.duration }}</span>
+    </div>
+    {% endfor %}
+    </div>
+
+
+  {% else %}
+    <p>Album not found.</p>
+  {% endif %}
+{% endblock %}

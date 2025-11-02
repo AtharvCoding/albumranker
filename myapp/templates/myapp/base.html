@@ -1,0 +1,20 @@
+{% load static %}
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>AlbumRanker</title>
+    <link rel="stylesheet" href="{% static 'myapp/css/main.css' %}">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+  </head>
+  <body>
+    <header style="padding:12px;background:#111;color:#fff">
+      <a href="{% url 'myapp:landing' %}" style="color:#fff;text-decoration:none;font-weight:700">AlbumRanker</a>
+      <a href="{% url 'myapp:search' %}" style="margin-left:18px;color:#fff;text-decoration:none">Search</a>
+    </header>
+    <main style="padding:24px;max-width:1000px;margin:0 auto">
+      {% block content %}{% endblock %}
+    </main>
+    <footer style="padding:12px;text-align:center;color:#666">Made with ♥ — AlbumRanker</footer>
+  </body>
+</html>

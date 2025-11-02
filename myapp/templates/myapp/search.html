@@ -1,0 +1,40 @@
+{% extends 'myapp/base.html' %}
+
+{% block content %}
+  <h1>Search Albums</h1>
+
+  <form method="get" action="{% url 'myapp:search' %}">
+    <input name="q" placeholder="Album or artist (e.g. evermore taylor swift)" value="{{ query }}">
+    <button type="submit">Search</button>
+  </form>
+
+  {% if error %}
+    <p style="color:crimson">Error: {{ error }}</p>
+  {% endif %}
+
+  {% if query %}
+    <h3>Results for: "{{ query }}"</h3>
+
+    {% if albums %}
+      <div class="album-grid">
+        {% for album in albums %}
+          <!-- Entire card is a link (accessible & keyboard-friendly) -->
+          <a href="{% url 'myapp:album_detail' album.id %}" class="album-card" aria-label="View {{ album.name }} by {{ album.artist }}">
+            {% if album.image %}
+              <div class="album-thumb">
+                <img src="{{ album.image }}" alt="{{ album.name }} cover">
+              </div>
+            {% endif %}
+            <div class="album-info">
+              <h4 class="album-name">{{ album.name }}</h4>
+              <p class="album-artist">{{ album.artist }}</p>
+              <p class="album-meta">{{ album.release_date }} • {{ album.total_tracks }} tracks</p>
+            </div>
+          </a>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>No albums found. Try another query.</p>
+    {% endif %}
+  {% endif %}
+{% endblock %}
