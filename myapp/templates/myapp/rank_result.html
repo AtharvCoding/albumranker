@@ -1,0 +1,29 @@
+{% extends "myapp/base.html" %}
+{% block content %}
+  <div style="display:flex;gap:18px;align-items:center;margin-bottom:18px;">
+    {% if album.image %}
+      <img src="{{ album.image }}" alt="{{ album.name }}" style="width:140px;height:140px;object-fit:cover;border-radius:8px">
+    {% endif %}
+    <div>
+      <h2>{{ album.name }}</h2>
+      <p style="color:#6b7280">{{ album.artist }}</p>
+    </div>
+  </div>
+
+  <h3>Your Final Ranking</h3>
+  <ol>
+    {% for track in ordered_tracks %}
+      <li style="margin:6px 0">
+        <strong>{{ forloop.counter }}.</strong> {{ track.name }}
+        <small style="color:#9ca3af;margin-left:8px;">{{ track.duration_ms|default_if_none:"" }}</small>
+      </li>
+    {% endfor %}
+  </ol>
+
+  <p style="margin-top:20px;color:#6b7280">Total comparisons: {{ comparisons_count }}</p>
+
+  <div style="margin-top:18px;">
+    <a href="{% url 'myapp:rank' album.id %}" style="padding:10px 14px;background:#111;color:#fff;border-radius:6px;text-decoration:none;">Restart Ranking</a>
+    <a href="{% url 'myapp:search' %}" style="padding:10px 14px;margin-left:8px;background:#e5e7eb;color:#111;border-radius:6px;text-decoration:none;">Search New Album</a>
+  </div>
+{% endblock %}

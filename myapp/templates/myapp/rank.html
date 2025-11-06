@@ -1,0 +1,392 @@
+{% extends "myapp/base.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+  .rank-hero { display:flex; gap:18px; align-items:center; margin-bottom:12px; }
+  .cta { background:#111; color:#fff; padding:12px 18px; border-radius:8px; border:0; cursor:pointer; }
+  .muted { color:#6b7280; }
+  .track-card { transition: transform .12s ease, box-shadow .12s ease; border-radius:10px; background:#fff; padding:18px; border:1px solid #eee; cursor:pointer; width:320px; }
+  .track-card:focus, .track-card:hover { transform: translateY(-6px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); outline: none; }
+  .badge { width:44px; height:44px; border-radius:8px; background:#111; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; }
+  .controls { margin-top:18px; display:flex; gap:12px; align-items:center; justify-content:center; }
+  #pair-container { display:flex; gap:18px; justify-content:center; flex-wrap:wrap; margin-top:26px; }
+</style>
+
+<!-- Header / Album info -->
+<div class="rank-hero">
+  {% if album.image %}
+    <img src="{{ album.image }}" alt="{{ album.name }}" style="width:140px;height:140px;object-fit:cover;border-radius:8px">
+  {% endif %}
+  <div>
+    <h2 style="margin:0">{{ album.name }}</h2>
+    <p class="muted" style="margin:6px 0 0 0">{{ album.artist }} • {{ album.release_date }}</p>
+    <p class="muted" style="margin:8px 0 0 0;font-size:13px">Tracks: {{ tracks|length }}</p>
+  </div>
+</div>
+
+<hr style="margin:18px 0">
+
+<!-- START SCREEN -->
+<section id="start-screen" style="text-align:center;padding:40px 0">
+  <p class="muted">Ready to rank the tracks from this album?</p>
+  <button id="start-btn" class="cta" style="margin-top:12px">Start ranking</button>
+  <p class="muted" style="margin-top:10px">Estimated comparisons: {{ est_total }}</p>
+</section>
+
+<!-- RANK UI (hidden until start) -->
+<section id="ranking-ui" style="display:none">
+  <div style="display:flex;justify-content:space-between;align-items:center">
+    <div class="muted">Comparisons: <strong id="done">0</strong> / <strong id="total">0</strong></div>
+    <div class="muted" id="progress-note"></div>
+  </div>
+
+  <div id="pair-container" style="margin-top:18px;">
+    <div id="card-a" class="track-card" role="button" tabindex="0" aria-label="Left track">
+      <div id="a-top" style="display:flex;gap:12px;align-items:center">
+        <div class="badge" id="a-badge">A</div>
+        <div>
+          <div id="a-name" style="font-weight:700;font-size:18px"></div>
+          <div id="a-meta" class="muted" style="font-size:13px;margin-top:6px"></div>
+        </div>
+      </div>
+      <div style="margin-top:12px;color:#9ca3af;font-size:13px">Click to choose</div>
+    </div>
+
+    <div id="card-b" class="track-card" role="button" tabindex="0" aria-label="Right track">
+      <div id="b-top" style="display:flex;gap:12px;align-items:center">
+        <div class="badge" id="b-badge">B</div>
+        <div>
+          <div id="b-name" style="font-weight:700;font-size:18px"></div>
+          <div id="b-meta" class="muted" style="font-size:13px;margin-top:6px"></div>
+        </div>
+      </div>
+      <div style="margin-top:12px;color:#9ca3af;font-size:13px">Click to choose</div>
+    </div>
+  </div>
+
+  <div class="controls" style="margin-top:20px">
+    <button id="finish-btn" style="display:none;padding:10px 14px;border-radius:8px;border:1px solid #ddd;background:#fff">Finish & view results</button>
+    <button id="restart-btn" style="padding:10px 14px;border-radius:8px;background:#ef4444;color:#fff;border:0;display:none">Restart ranking</button>
+  </div>
+</section>
+
+<!-- DONE SCREEN -->
+<section id="done-screen" style="display:none;text-align:center;padding:40px 0">
+  <h3>All done!</h3>
+  <p class="muted">When you're ready, view your final ranking.</p>
+  <div style="margin-top:12px">
+    <a id="view-results-link" class="cta" href="#">View results</a>
+  </div>
+</section>
+
+<!-- JSON data safely embedded -->
+<script id="initial-tracks" type="application/json">
+  {{ tracks_json|safe }}
+</script>
+
+<script>
+/*
+  Full client-side ranking driver + submit logic
+  - Binary-insert algorithm (insertion via binary search)
+  - Records comparisons array
+  - submitResults() sends final ordered_ids to server (/submit/)
+  - Wired to Finish button and View Results link
+  - Hides pair UI on finish so empty cards don't show
+*/
+
+function getCookie(name) {
+  const v = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+  return v ? v.pop() : null;
+}
+
+/* Config / Initial data */
+const TRACKS = JSON.parse(document.getElementById('initial-tracks').textContent || '[]');
+const ALBUM_ID = "{{ album.id }}";
+const SUBMIT_URL = "{% url 'myapp:rank_submit' album_id=album.id %}";
+const RESULT_URL = "{% url 'myapp:rank_result' album_id=album.id %}";
+
+/* UI refs */
+const startScreen = document.getElementById('start-screen');
+const startBtn = document.getElementById('start-btn');
+const rankingUi = document.getElementById('ranking-ui');
+const cardA = document.getElementById('card-a');
+const cardB = document.getElementById('card-b');
+const aName = document.getElementById('a-name');
+const aMeta = document.getElementById('a-meta');
+const bName = document.getElementById('b-name');
+const bMeta = document.getElementById('b-meta');
+const doneSpan = document.getElementById('done');
+const totalSpan = document.getElementById('total');
+const finishBtn = document.getElementById('finish-btn');
+const restartBtn = document.getElementById('restart-btn');
+const doneScreen = document.getElementById('done-screen');
+const viewResultsLink = document.getElementById('view-results-link');
+
+console.debug("TRACKS parsed:", TRACKS);
+totalSpan.textContent = (function estTotal(n){ if(!n||n<2) return 0; return Math.ceil(n * Math.log2(Math.max(2,n))); })(TRACKS.length);
+
+/* Driver state */
+let state = {
+  ordered: [],              // placed track objects
+  pending: TRACKS.slice(),  // queue of remaining track objects
+  comparisons: [],          // [ [winnerId, loserId], ... ]
+  active: null              // { probe, lo, hi } while inserting
+};
+
+function dumpState(tag) {
+  console.debug(tag, {
+    ordered_len: state.ordered.length,
+    pending_len: state.pending.length,
+    active: state.active ? { probe: state.active.probe.id, lo: state.active.lo, hi: state.active.hi } : null,
+    comparisons: state.comparisons.length
+  });
+}
+
+/* Render pair to UI; hides pair UI when pair === null */
+function renderPair(pair) {
+  const pairContainer = document.getElementById('pair-container');
+  const controls = document.querySelector('.controls');
+
+  if (!pair) {
+    if (pairContainer) pairContainer.style.display = 'none';
+    if (controls) controls.style.display = 'none';
+    aName.textContent = '';
+    aMeta.textContent = '';
+    bName.textContent = '';
+    bMeta.textContent = '';
+    window.currentPair = null;
+    return;
+  }
+
+  if (pairContainer) pairContainer.style.display = 'flex';
+  if (controls) controls.style.display = 'flex';
+
+  const [left, right] = pair;
+  aName.textContent = left.name;
+  aMeta.textContent = `Track ${left.track_number} • ${left.duration}`;
+  bName.textContent = right.name;
+  bMeta.textContent = `Track ${right.track_number} • ${right.duration}`;
+  window.currentPair = pair;
+}
+
+/* Binary-insert functions */
+function startNextInsertionIfNeeded() {
+  if (!state.active && state.pending.length) {
+    const probe = state.pending.shift();
+    state.active = { probe: probe, lo: 0, hi: state.ordered.length - 1 };
+    console.debug("start insertion", probe.id, "ordered length", state.ordered.length);
+    if (state.ordered.length === 0) {
+      state.ordered.push(probe);
+      console.debug("direct inserted first probe", probe.id);
+      state.active = null;
+    }
+  }
+}
+
+function isFinished() {
+  return state.pending.length === 0 && state.active === null;
+}
+
+function getNextPair() {
+  while (true) {
+    if (!state.active) {
+      if (state.pending.length === 0) {
+        console.debug("getNextPair -> finished (no pending and no active)");
+        return null;
+      }
+      startNextInsertionIfNeeded();
+      if (!state.active) {
+        continue;
+      }
+    }
+
+    const { probe, lo, hi } = state.active;
+    if (lo > hi) {
+      state.ordered.splice(lo, 0, probe);
+      console.debug("Inserted probe at", lo, "id:", probe.id, "ordered size:", state.ordered.length);
+      state.active = null;
+      if (state.pending.length === 0) {
+        console.debug("Inserted last probe -> finished");
+        return null;
+      } else {
+        continue;
+      }
+    } else {
+      const mid = Math.floor((lo + hi) / 2);
+      const midItem = state.ordered[mid];
+      console.debug("Asking pair", probe.id, "vs", midItem.id, "(lo,hi,mid)=", lo, hi, mid);
+      return [probe, midItem];
+    }
+  }
+}
+
+function applyChoice(winnerId, loserId) {
+  state.comparisons.push([winnerId, loserId]);
+  if (!state.active) {
+    console.warn("applyChoice called with no active insertion");
+    return;
+  }
+  const midIndex = Math.floor((state.active.lo + state.active.hi) / 2);
+  if (winnerId === state.active.probe.id) {
+    state.active.hi = midIndex - 1;
+    console.debug("Probe won -> new hi:", state.active.hi);
+  } else {
+    state.active.lo = midIndex + 1;
+    console.debug("Probe lost -> new lo:", state.active.lo);
+  }
+}
+
+/* UI helpers */
+function updateProgressUI() {
+  doneSpan.textContent = state.comparisons.length;
+}
+
+/* Submit results function (returns Promise that resolves to redirect URL) */
+function submitResults() {
+  return new Promise((resolve, reject) => {
+    if (!isFinished()) return reject(new Error("Ranking not finished."));
+    const payload = {
+      album_id: ALBUM_ID,
+      ordered_ids: state.ordered.map(t => t.id),
+      comparisons: state.comparisons,
+      comparisons_count: state.comparisons.length
+    };
+    console.debug("Submitting payload", payload);
+    fetch(SUBMIT_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCookie('csrftoken')
+      },
+      credentials: 'same-origin',
+      body: JSON.stringify(payload)
+    })
+    .then(response => response.json().then(json => ({ ok: response.ok, json })).catch(() => ({ ok: response.ok, json: null })))
+    .then(({ ok, json }) => {
+      if (!ok) {
+        console.error("Server returned non-OK response", json);
+        return reject(new Error("Server rejected payload"));
+      }
+      if (json && json.redirect) resolve(json.redirect);
+      else resolve(RESULT_URL);
+    })
+    .catch(err => {
+      console.error("submitResults error", err);
+      reject(err);
+    });
+  });
+}
+
+/* Show finish UI and optionally auto-submit (auto-submit commented) */
+function showFinishUI() {
+  // hide pair UI & controls
+  const pairContainer = document.getElementById('pair-container');
+  const controls = document.querySelector('.controls');
+  if (pairContainer) pairContainer.style.display = 'none';
+  if (controls) controls.style.display = 'none';
+
+  finishBtn.style.display = 'inline-block';
+  restartBtn.style.display = 'inline-block';
+  cardA.style.pointerEvents = 'none';
+  cardB.style.pointerEvents = 'none';
+  doneScreen.style.display = 'block';
+
+  // Optional auto-submit:
+  // submitResults().then(url => window.location = url).catch(err => console.warn("Auto-submit failed:", err));
+}
+
+/* Start button handler */
+startBtn.addEventListener('click', () => {
+  // ensure UI visible
+  startScreen.style.display = 'none';
+  rankingUi.style.display = 'block';
+
+  // ensure pair UI & controls visible
+  const pairContainer = document.getElementById('pair-container');
+  const controls = document.querySelector('.controls');
+  if (pairContainer) pairContainer.style.display = 'flex';
+  if (controls) controls.style.display = 'flex';
+
+  dumpState("start clicked");
+  updateProgressUI();
+  const pair = getNextPair();
+  if (pair) renderPair(pair);
+  else if (isFinished()) { renderPair(null); showFinishUI(); }
+  else {
+    const next = getNextPair();
+    if (next) renderPair(next);
+    else { renderPair(null); showFinishUI(); }
+  }
+});
+
+/* Card click handlers */
+cardA.addEventListener('click', () => {
+  const pair = window.currentPair;
+  if (!pair) return;
+  applyChoice(pair[0].id, pair[1].id);
+  updateProgressUI();
+  const next = getNextPair();
+  if (next) renderPair(next);
+  else if (isFinished()) { renderPair(null); showFinishUI(); }
+  else {
+    const alt = getNextPair();
+    if (alt) renderPair(alt);
+    else { renderPair(null); showFinishUI(); }
+  }
+});
+
+cardB.addEventListener('click', () => {
+  const pair = window.currentPair;
+  if (!pair) return;
+  applyChoice(pair[1].id, pair[0].id);
+  updateProgressUI();
+  const next = getNextPair();
+  if (next) renderPair(next);
+  else if (isFinished()) { renderPair(null); showFinishUI(); }
+  else {
+    const alt = getNextPair();
+    if (alt) renderPair(alt);
+    else { renderPair(null); showFinishUI(); }
+  }
+});
+
+/* Keyboard shortcuts */
+document.addEventListener('keydown', (e) => {
+  if (rankingUi.style.display === 'none') return;
+  if (e.key === 'ArrowLeft') cardA.click();
+  if (e.key === 'ArrowRight') cardB.click();
+});
+
+/* Finish button wired to submitResults() */
+finishBtn.addEventListener('click', () => {
+  finishBtn.disabled = true;
+  submitResults()
+    .then(redirectUrl => { window.location = redirectUrl; })
+    .catch(err => {
+      console.error("Submit failed:", err);
+      finishBtn.disabled = false;
+      alert("Failed to submit results. Try again.");
+    });
+});
+
+/* View Results link: ensure we POST before redirecting */
+viewResultsLink.addEventListener('click', (e) => {
+  e.preventDefault();
+  submitResults()
+    .then(redirectUrl => { window.location = redirectUrl; })
+    .catch(err => {
+      console.warn("ViewResults submit failed or ranking incomplete:", err);
+      window.location = RESULT_URL;
+    });
+});
+
+/* Restart: reload page */
+restartBtn.addEventListener('click', () => window.location.reload());
+
+/* Expose state for debugging */
+window.RANK_STATE = state;
+dumpState("script initialized");
+</script>
+
+{% endblock %}

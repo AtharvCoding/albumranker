@@ -1,0 +1,21 @@
+{% extends "myapp/base.html" %}
+{% block content %}
+  <div style="display:flex;gap:18px;align-items:center;margin-bottom:18px;">
+    {% if album.image %}
+      <img src="{{ album.image }}" alt="{{ album.name }}" style="width:120px;height:120px;object-fit:cover;border-radius:8px">
+    {% endif %}
+    <div>
+      <h2>{{ album.name }}</h2>
+      <p style="color:#6b7280">{{ album.artist }} • Tracks: {{ tracks_count }}</p>
+    </div>
+  </div>
+
+  <div style="padding:20px;border:1px dashed #e5e7eb;border-radius:8px">
+    <h3>No ranking found yet</h3>
+    <p class="muted">This album hasn't been ranked yet. Start a ranking session to generate the final results.</p>
+    <div style="margin-top:12px">
+      <a href="{% url 'myapp:rank' album_id=album_id %}" class="cta">Start ranking</a>
+      <a href="{% url 'myapp:search' %}" style="margin-left:8px">Search another album</a>
+    </div>
+  </div>
+{% endblock %}

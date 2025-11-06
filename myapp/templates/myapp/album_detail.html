@@ -16,10 +16,12 @@
         <p style="margin:4px 0 0 0"><strong>Release date:</strong> {{ album.release_date }}</p>
         <p style="margin:4px 0 0 0"><strong>Total tracks:</strong> {{ album.total_tracks }}</p>
 
-        <p style="margin-top:12px">
-          <a href="#" onclick="alert('Ranking UI coming soon');return false;"
-             style="padding:8px 12px;background:#111;color:#fff;border-radius:6px;text-decoration:none">Start ranking</a>
-        </p>
+      <!-- replace existing Start ranking button with this -->
+        <a href="{% url 'myapp:rank' album_id=album.id %}"
+           class="cta"
+          style="padding:8px 12px;background:#111;color:#fff;border-radius:6px;text-decoration:none;display:inline-block">
+          Start ranking
+        </a>
       </div>
     </div>
 
