@@ -1,0 +1,777 @@
+/* Theme CSS - Dark, elegant interface inspired by Spotify and Apple Music */
+
+:root {
+  --bg-primary: #121212;
+  --bg-secondary: #181818;
+  --bg-tertiary: #1a1a1a;
+  --bg-card: rgba(255, 255, 255, 0.05);
+  --bg-card-hover: rgba(255, 255, 255, 0.08);
+  --bg-glass: rgba(18, 18, 18, 0.8);
+  
+  --text-primary: #ffffff;
+  --text-secondary: #b3b3b3;
+  --text-muted: #6b7280;
+  
+  --accent: #1db954;
+  --accent-hover: #1ed760;
+  --accent-dark: #169c46;
+  
+  --border: rgba(255, 255, 255, 0.1);
+  --border-hover: rgba(255, 255, 255, 0.2);
+  
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 20px rgba(29, 185, 84, 0.3);
+  
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: all 0.15s ease;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: #f5f5f5;
+  color: #000000;
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Circular Std', 'Segoe UI', sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+/* Navbar */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: var(--bg-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+}
+
+header .nav-left {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+header .logo {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: var(--transition-fast);
+}
+
+header .logo:hover {
+  color: var(--accent);
+}
+
+header .nav-links {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+header .nav-links a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  transition: var(--transition-fast);
+}
+
+header .nav-links a:hover {
+  color: var(--text-primary);
+  background: var(--bg-card);
+}
+
+header .nav-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+header .user-info {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin-right: 8px;
+}
+
+header form {
+  display: inline-flex;
+  align-items: center;
+}
+
+header button[type="submit"] {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  transition: var(--transition-fast);
+  font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+}
+
+header button[type="submit"]:hover {
+  color: var(--text-primary);
+  background: var(--bg-card);
+}
+
+/* Main content */
+main {
+  padding: 32px;
+  max-width: 1400px;
+  margin: 0 auto;
+  animation: fadeIn 0.4s ease;
+  background: #ffffff;
+  color: #000000;
+  min-height: calc(100vh - 200px);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Cards */
+.card {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  transition: var(--transition);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card:hover {
+  background: #fafafa;
+  border-color: rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Buttons */
+.cta, .btn {
+  display: inline-block;
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: inherit;
+  text-align: center;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:hover {
+  background: var(--accent-hover);
+  box-shadow: var(--shadow-glow);
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background: #ffffff;
+  color: #000000;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.btn-secondary:hover {
+  background: #f5f5f5;
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.btn-danger {
+  background: rgba(220, 38, 38, 0.1);
+  color: #ef4444;
+  border: 1px solid rgba(220, 38, 38, 0.3);
+}
+
+.btn-danger:hover {
+  background: rgba(220, 38, 38, 0.2);
+  border-color: #ef4444;
+}
+
+.btn-small {
+  padding: 6px 12px;
+  font-size: 13px;
+}
+
+/* Grid layouts */
+.grid {
+  display: grid;
+  gap: 20px;
+}
+
+.grid-albums {
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+}
+
+.grid-albums-large {
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+/* Album cards */
+.album-card {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  transition: var(--transition);
+  cursor: pointer;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.album-card:hover {
+  background: #fafafa;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.album-cover {
+  width: 100%;
+  max-width: 200px;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  margin: 0 auto 12px auto;
+  display: block;
+  box-shadow: var(--shadow-md);
+}
+
+.album-card h3 {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #000000;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.album-card p {
+  margin: 0;
+  font-size: 14px;
+  color: #333333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Track rows */
+.track-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  transition: var(--transition-fast);
+  cursor: pointer;
+}
+
+.track-row:hover {
+  background: #f5f5f5;
+}
+
+.track-row .rank {
+  width: 32px;
+  text-align: center;
+  font-weight: 700;
+  color: #666666;
+  font-size: 16px;
+}
+
+.track-row .track-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.track-row .track-name {
+  font-size: 16px;
+  font-weight: 500;
+  color: #000000;
+  margin: 0 0 4px 0;
+}
+
+.track-row .track-meta {
+  font-size: 14px;
+  color: #666666;
+  margin: 0;
+}
+
+.track-row.top-3 {
+  background: rgba(29, 185, 84, 0.1);
+  border-left: 3px solid var(--accent);
+}
+
+.track-row.top-3 .rank {
+  color: var(--accent);
+}
+
+/* Search bar */
+.search-container {
+  max-width: 600px;
+  margin: 40px auto;
+  text-align: center;
+}
+
+.search-bar {
+  width: 100%;
+  padding: 16px 24px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-xl);
+  color: #000000;
+  font-size: 16px;
+  font-family: inherit;
+  transition: var(--transition);
+  outline: none;
+}
+
+.search-bar:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(29, 185, 84, 0.1), var(--shadow-glow);
+  background: #ffffff;
+}
+
+/* Two-column layout */
+.two-column {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 32px;
+  margin-bottom: 32px;
+}
+
+@media (max-width: 768px) {
+  .two-column {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Album detail */
+.album-header {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.album-cover-large {
+  width: 300px;
+  height: 300px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+}
+
+.album-info h1 {
+  font-size: 48px;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+  color: #000000;
+}
+
+.album-info h2 {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0 0 24px 0;
+  color: #666666;
+}
+
+.album-meta {
+  color: #666666;
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+.album-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Tracklist */
+.tracklist {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-md);
+  padding: 8px;
+  margin-top: 32px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tracklist-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  font-weight: 600;
+  color: #666666;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Ranking battle */
+.ranking-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 4px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 2px;
+  margin-bottom: 40px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.3s ease;
+  box-shadow: var(--shadow-glow);
+}
+
+.battle-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+@media (max-width: 768px) {
+  .battle-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+.battle-card {
+  background: #ffffff;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.battle-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: var(--radius-lg);
+  opacity: 0;
+  transition: var(--transition);
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+.battle-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-glow);
+}
+
+.battle-card:hover::before {
+  opacity: 1;
+}
+
+.battle-card.selected {
+  border-color: var(--accent);
+  background: rgba(29, 185, 84, 0.1);
+  box-shadow: var(--shadow-glow);
+}
+
+.battle-card .badge {
+  display: inline-block;
+  width: 48px;
+  height: 48px;
+  background: var(--accent);
+  color: var(--text-primary);
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 48px;
+  margin-bottom: 16px;
+}
+
+.battle-card .track-name {
+  font-size: 24px;
+  font-weight: 600;
+  color: #000000;
+  margin: 0 0 8px 0;
+}
+
+.battle-card .track-meta {
+  font-size: 16px;
+  color: #666666;
+  margin: 0;
+}
+
+/* Results page */
+.results-header {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  margin-bottom: 32px;
+}
+
+.results-header img {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+}
+
+.results-info h2 {
+  font-size: 36px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  color: #000000;
+}
+
+.results-info p {
+  font-size: 18px;
+  color: #666666;
+  margin: 0 0 24px 0;
+}
+
+.results-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.saved-badge {
+  display: inline-block;
+  padding: 8px 16px;
+  background: rgba(29, 185, 84, 0.2);
+  color: var(--accent);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
+/* Export menu */
+.export-menu-container {
+  position: relative;
+  display: inline-block;
+}
+
+.export-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 8px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  z-index: 1000;
+  min-width: 180px;
+  overflow: hidden;
+  display: none;
+}
+
+.export-menu.show {
+  display: block;
+  animation: fadeIn 0.2s ease;
+}
+
+.export-menu button {
+  display: block;
+  width: 100%;
+  padding: 12px 16px;
+  text-align: left;
+  background: none;
+  border: none;
+  color: #000000;
+  cursor: pointer;
+  font-size: 14px;
+  transition: var(--transition-fast);
+  font-family: inherit;
+}
+
+.export-menu button:hover {
+  background: #f5f5f5;
+  color: var(--accent);
+}
+
+.export-menu button:not(:last-child) {
+  border-bottom: 1px solid var(--border);
+}
+
+/* Empty states */
+.empty-state {
+  text-align: center;
+  padding: 80px 20px;
+  color: #666666;
+}
+
+.empty-state h3 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #000000;
+  margin: 0 0 12px 0;
+}
+
+.empty-state p {
+  font-size: 16px;
+  margin: 0 0 24px 0;
+  color: #666666;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: 32px;
+  color: #666666;
+  font-size: 14px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  margin-top: 64px;
+  background: #ffffff;
+}
+
+/* Utility classes */
+.text-primary { color: #000000; }
+.text-secondary { color: #333333; }
+.text-muted { color: #666666; }
+.text-accent { color: var(--accent); }
+
+.mt-1 { margin-top: 8px; }
+.mt-2 { margin-top: 16px; }
+.mt-3 { margin-top: 24px; }
+.mt-4 { margin-top: 32px; }
+
+.mb-1 { margin-bottom: 8px; }
+.mb-2 { margin-bottom: 16px; }
+.mb-3 { margin-bottom: 24px; }
+.mb-4 { margin-bottom: 32px; }
+
+.gap-1 { gap: 8px; }
+.gap-2 { gap: 16px; }
+.gap-3 { gap: 24px; }
+
+.flex { display: flex; }
+.flex-wrap { flex-wrap: wrap; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  main {
+    padding: 16px;
+  }
+  
+  header {
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px 16px;
+  }
+  
+  header .nav-left,
+  header .nav-right {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .album-info h1 {
+    font-size: 32px;
+    color: #000000;
+  }
+  
+  .album-cover-large {
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  .battle-cards {
+    gap: 16px;
+  }
+  
+  .battle-card {
+    padding: 24px;
+  }
+}
+
+/* Loading states */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.loading {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bg-card);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--bg-card-hover);
+}
+

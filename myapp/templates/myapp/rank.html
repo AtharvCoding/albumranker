@@ -2,83 +2,68 @@
 {% load static %}
 
 {% block content %}
-<style>
-  .rank-hero { display:flex; gap:18px; align-items:center; margin-bottom:12px; }
-  .cta { background:#111; color:#fff; padding:12px 18px; border-radius:8px; border:0; cursor:pointer; }
-  .muted { color:#6b7280; }
-  .track-card { transition: transform .12s ease, box-shadow .12s ease; border-radius:10px; background:#fff; padding:18px; border:1px solid #eee; cursor:pointer; width:320px; }
-  .track-card:focus, .track-card:hover { transform: translateY(-6px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); outline: none; }
-  .badge { width:44px; height:44px; border-radius:8px; background:#111; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; }
-  .controls { margin-top:18px; display:flex; gap:12px; align-items:center; justify-content:center; }
-  #pair-container { display:flex; gap:18px; justify-content:center; flex-wrap:wrap; margin-top:26px; }
-</style>
-
-<!-- Header / Album info -->
-<div class="rank-hero">
-  {% if album.image %}
-    <img src="{{ album.image }}" alt="{{ album.name }}" style="width:140px;height:140px;object-fit:cover;border-radius:8px">
-  {% endif %}
-  <div>
-    <h2 style="margin:0">{{ album.name }}</h2>
-    <p class="muted" style="margin:6px 0 0 0">{{ album.artist }} • {{ album.release_date }}</p>
-    <p class="muted" style="margin:8px 0 0 0;font-size:13px">Tracks: {{ tracks|length }}</p>
-  </div>
-</div>
-
-<hr style="margin:18px 0">
-
-<!-- START SCREEN -->
-<section id="start-screen" style="text-align:center;padding:40px 0">
-  <p class="muted">Ready to rank the tracks from this album?</p>
-  <button id="start-btn" class="cta" style="margin-top:12px">Start ranking</button>
-  <p class="muted" style="margin-top:10px">Estimated comparisons: {{ est_total }}</p>
-</section>
-
-<!-- RANK UI (hidden until start) -->
-<section id="ranking-ui" style="display:none">
-  <div style="display:flex;justify-content:space-between;align-items:center">
-    <div class="muted">Comparisons: <strong id="done">0</strong> / <strong id="total">0</strong></div>
-    <div class="muted" id="progress-note"></div>
+<div class="ranking-container">
+  <!-- Header / Album info -->
+  <div style="display:flex;gap:24px;align-items:center;margin-bottom:32px">
+    {% if album.image %}
+      <img src="{{ album.image }}" alt="{{ album.name }}" style="width:120px;height:120px;object-fit:cover;border-radius:var(--radius-md);box-shadow:var(--shadow-md);flex-shrink:0">
+    {% endif %}
+    <div>
+      <h1 style="font-size:32px;font-weight:700;margin:0 0 8px 0;color:#000000">{{ album.name }}</h1>
+      <p style="color:#666666;margin:0 0 4px 0;font-size:18px">{{ album.artist }}</p>
+      <p style="color:#666666;margin:0;font-size:14px">{{ album.release_date }} • {{ tracks|length }} tracks</p>
+    </div>
   </div>
 
-  <div id="pair-container" style="margin-top:18px;">
-    <div id="card-a" class="track-card" role="button" tabindex="0" aria-label="Left track">
-      <div id="a-top" style="display:flex;gap:12px;align-items:center">
+  <!-- Progress bar (hidden until start) -->
+  <div id="progress-container" style="display:none;margin-bottom:32px">
+    <div class="progress-bar">
+      <div id="progress-fill" class="progress-fill" style="width:0%"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+      <div style="color:#666666;font-size:14px">Comparisons: <strong id="done" style="color:#000000">0</strong> / <strong id="total" style="color:#000000">0</strong></div>
+      <div style="color:#666666;font-size:13px" id="progress-note"></div>
+    </div>
+  </div>
+
+  <!-- START SCREEN -->
+  <section id="start-screen" style="text-align:center;padding:60px 20px">
+    <p style="color:#666666;font-size:18px;margin:0 0 24px 0">Ready to rank the tracks from this album?</p>
+    <button id="start-btn" class="btn btn-primary" style="font-size:16px;padding:16px 32px">Start ranking</button>
+    <p style="color:#666666;margin-top:16px;font-size:14px">Estimated comparisons: {{ est_total }}</p>
+  </section>
+
+  <!-- RANK UI (hidden until start) -->
+  <section id="ranking-ui" style="display:none">
+    <div id="pair-container" class="battle-cards">
+      <div id="card-a" class="battle-card" role="button" tabindex="0" aria-label="Left track">
         <div class="badge" id="a-badge">A</div>
-        <div>
-          <div id="a-name" style="font-weight:700;font-size:18px"></div>
-          <div id="a-meta" class="muted" style="font-size:13px;margin-top:6px"></div>
-        </div>
+        <div class="track-name" id="a-name" style="margin-bottom:8px"></div>
+        <div class="track-meta" id="a-meta"></div>
+        <div style="margin-top:16px;color:#666666;font-size:13px">Click to choose</div>
       </div>
-      <div style="margin-top:12px;color:#9ca3af;font-size:13px">Click to choose</div>
-    </div>
 
-    <div id="card-b" class="track-card" role="button" tabindex="0" aria-label="Right track">
-      <div id="b-top" style="display:flex;gap:12px;align-items:center">
+      <div id="card-b" class="battle-card" role="button" tabindex="0" aria-label="Right track">
         <div class="badge" id="b-badge">B</div>
-        <div>
-          <div id="b-name" style="font-weight:700;font-size:18px"></div>
-          <div id="b-meta" class="muted" style="font-size:13px;margin-top:6px"></div>
-        </div>
+        <div class="track-name" id="b-name" style="margin-bottom:8px"></div>
+        <div class="track-meta" id="b-meta"></div>
+        <div style="margin-top:16px;color:#666666;font-size:13px">Click to choose</div>
       </div>
-      <div style="margin-top:12px;color:#9ca3af;font-size:13px">Click to choose</div>
     </div>
-  </div>
 
-  <div class="controls" style="margin-top:20px">
-    <button id="finish-btn" style="display:none;padding:10px 14px;border-radius:8px;border:1px solid #ddd;background:#fff">Finish & view results</button>
-    <button id="restart-btn" style="padding:10px 14px;border-radius:8px;background:#ef4444;color:#fff;border:0;display:none">Restart ranking</button>
-  </div>
-</section>
+    <div style="margin-top:32px;display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap">
+      <button id="finish-btn" class="btn btn-primary" style="display:none">Finish & view results</button>
+      <button id="restart-btn" class="btn btn-danger" style="display:none">Restart ranking</button>
+    </div>
+  </section>
 
-<!-- DONE SCREEN -->
-<section id="done-screen" style="display:none;text-align:center;padding:40px 0">
-  <h3>All done!</h3>
-  <p class="muted">When you're ready, view your final ranking.</p>
-  <div style="margin-top:12px">
-    <a id="view-results-link" class="cta" href="#">View results</a>
-  </div>
-</section>
+  <!-- DONE SCREEN -->
+  <section id="done-screen" style="display:none;text-align:center;padding:60px 20px">
+    <h2 style="font-size:32px;font-weight:700;margin:0 0 16px 0;color:#000000">All done!</h2>
+    <p style="color:#666666;font-size:18px;margin:0 0 24px 0">When you're ready, view your final ranking.</p>
+    <a id="view-results-link" class="btn btn-primary" href="#" style="font-size:16px;padding:16px 32px">View results</a>
+  </section>
+</div>
 
 <!-- JSON data safely embedded -->
 <script id="initial-tracks" type="application/json">
@@ -244,6 +229,13 @@ function applyChoice(winnerId, loserId) {
 /* UI helpers */
 function updateProgressUI() {
   doneSpan.textContent = state.comparisons.length;
+  const total = parseInt(totalSpan.textContent) || 0;
+  const done = state.comparisons.length;
+  const progressPercent = total > 0 ? Math.min((done / total) * 100, 100) : 0;
+  const progressFill = document.getElementById('progress-fill');
+  if (progressFill) {
+    progressFill.style.width = progressPercent + '%';
+  }
 }
 
 /* Submit results function (returns Promise that resolves to redirect URL) */
@@ -285,11 +277,9 @@ function submitResults() {
 
 /* Show finish UI and optionally auto-submit (auto-submit commented) */
 function showFinishUI() {
-  // hide pair UI & controls
+  // hide pair UI
   const pairContainer = document.getElementById('pair-container');
-  const controls = document.querySelector('.controls');
   if (pairContainer) pairContainer.style.display = 'none';
-  if (controls) controls.style.display = 'none';
 
   finishBtn.style.display = 'inline-block';
   restartBtn.style.display = 'inline-block';
@@ -306,12 +296,12 @@ startBtn.addEventListener('click', () => {
   // ensure UI visible
   startScreen.style.display = 'none';
   rankingUi.style.display = 'block';
+  const progressContainer = document.getElementById('progress-container');
+  if (progressContainer) progressContainer.style.display = 'block';
 
-  // ensure pair UI & controls visible
+  // ensure pair UI visible
   const pairContainer = document.getElementById('pair-container');
-  const controls = document.querySelector('.controls');
-  if (pairContainer) pairContainer.style.display = 'flex';
-  if (controls) controls.style.display = 'flex';
+  if (pairContainer) pairContainer.style.display = 'grid';
 
   dumpState("start clicked");
   updateProgressUI();

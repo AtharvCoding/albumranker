@@ -1,8 +1,8 @@
 {% extends 'myapp/base.html' %}
 {% block content %}
-  <section class="hero">
-    <h1>Rank your favorite albums — one pair at a time.</h1>
-    <p>Search an album, then decide between two songs until a definitive ranking emerges.</p>
-    <a class="cta" href="{% url 'myapp:search' %}">Start ranking</a>
+  <section class="empty-state" style="max-width: 600px; margin: 80px auto;">
+    <h1 style="font-size: 48px; font-weight: 700; margin: 0 0 24px 0; color: #000000;">Rank your favorite albums</h1>
+    <p style="font-size: 20px; color: #666666; margin: 0 0 40px 0;">Search an album, then decide between two songs until a definitive ranking emerges.</p>
+    <a class="btn btn-primary" href="{% url 'myapp:search' %}" style="font-size: 16px; padding: 16px 32px;">Start ranking</a>
   </section>
 {% endblock %}

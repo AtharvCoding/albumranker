@@ -1,43 +1,54 @@
 {% extends "myapp/base.html" %}
 {% load static %}
 {% block content %}
-  <div style="display:flex;gap:18px;align-items:center;margin-bottom:18px;">
+  <div class="results-header">
     {% if album.image %}
-      <img src="{{ album.image }}" alt="{{ album.name }}" style="width:140px;height:140px;object-fit:cover;border-radius:8px" id="album-cover">
+      <img src="{{ album.image }}" alt="{{ album.name }}" id="album-cover">
     {% endif %}
-    <div style="flex:1">
+    <div class="results-info">
       <h2>{{ album.name }}</h2>
-      <p style="color:#6b7280">{{ album.artist }}</p>
+      <p>{{ album.artist }}</p>
       {% if user.is_authenticated and saved %}
-        <p style="margin-top:8px;color:#10b981;font-size:14px">✓ Saved to My Music</p>
+        <div class="saved-badge">✓ Saved to My Music</div>
       {% endif %}
-      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
-        <div style="position:relative;display:inline-block">
-          <button id="export-btn" style="padding:8px 14px;background:#e5e7eb;color:#111;border:0;border-radius:6px;cursor:pointer;font-size:14px">Export ▼</button>
-          <div id="export-menu" style="display:none;position:absolute;top:100%;left:0;margin-top:4px;background:#fff;border:1px solid #ddd;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,0.15);z-index:1000;min-width:180px;overflow:visible">
-            <button id="export-csv" type="button" style="display:block;width:100%;padding:12px 16px;text-align:left;background:#fff;border:0;cursor:pointer;font-size:14px;color:#111;transition:background 0.2s;font-family:inherit">Export as CSV</button>
-            <button id="export-png" type="button" style="display:block;width:100%;padding:12px 16px;text-align:left;background:#fff;border:0;border-top:1px solid #eee;cursor:pointer;font-size:14px;color:#111;transition:background 0.2s;font-family:inherit">Export as Image</button>
+      <div class="results-actions">
+        <div class="export-menu-container">
+          <button id="export-btn" class="btn btn-secondary">Export ▼</button>
+          <div id="export-menu" class="export-menu">
+            <button id="export-csv" type="button">Export as CSV</button>
+            <button id="export-png" type="button">Export as Image</button>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <h3>Your Final Ranking</h3>
-  <ol id="ranking-list">
+  <h2 style="font-size: 28px; font-weight: 700; margin: 0 0 24px 0; color: #000000;">Your Final Ranking</h2>
+  
+  <div class="tracklist">
+    <div class="tracklist-header">
+      <div style="display: grid; grid-template-columns: 60px 1fr 100px; gap: 16px; padding: 0 16px;">
+        <span>Rank</span>
+        <span>Track</span>
+        <span style="text-align: right;">Duration</span>
+      </div>
+    </div>
     {% for track in ordered_tracks %}
-      <li style="margin:6px 0" data-track-id="{{ track.id }}" data-track-name="{{ track.name }}" data-duration-ms="{{ track.duration_ms }}">
-        {{ track.name }}
-        <small style="color:#9ca3af;margin-left:8px;">{{ track.duration_formatted }}</small>
-      </li>
+      <div class="track-row {% if forloop.counter <= 3 %}top-3{% endif %}" data-track-id="{{ track.id }}" data-track-name="{{ track.name }}" data-duration-ms="{{ track.duration_ms }}">
+        <span class="rank">{{ forloop.counter }}</span>
+        <div class="track-info">
+          <div class="track-name">{{ track.name }}</div>
+        </div>
+        <span style="color: #666666; width: 100px; text-align: right;">{{ track.duration_formatted }}</span>
+      </div>
     {% endfor %}
-  </ol>
+  </div>
 
-  <p style="margin-top:20px;color:#6b7280">Total comparisons: {{ comparisons_count }}</p>
+  <p style="margin-top: 24px; color: #666666; font-size: 14px;">Total comparisons: {{ comparisons_count }}</p>
 
-  <div style="margin-top:18px;">
-    <a href="{% url 'myapp:rank' album.id %}" style="padding:10px 14px;background:#111;color:#fff;border-radius:6px;text-decoration:none;">Restart Ranking</a>
-    <a href="{% url 'myapp:search' %}" style="padding:10px 14px;margin-left:8px;background:#e5e7eb;color:#111;border-radius:6px;text-decoration:none;">Search New Album</a>
+  <div style="margin-top: 32px; display: flex; gap: 12px; flex-wrap: wrap;">
+    <a href="{% url 'myapp:rank' album.id %}" class="btn btn-primary">Restart Ranking</a>
+    <a href="{% url 'myapp:search' %}" class="btn btn-secondary">Search New Album</a>
   </div>
 
   <script>

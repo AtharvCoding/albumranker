@@ -21,33 +21,19 @@ const exportMenu = document.getElementById('export-menu');
 if (exportBtn && exportMenu) {
   exportBtn.addEventListener('click', (e) => {
     e.stopPropagation();
-    const isVisible = exportMenu.style.display === 'block';
-    exportMenu.style.display = isVisible ? 'none' : 'block';
+    exportMenu.classList.toggle('show');
   });
   
   // Close menu when clicking outside
   document.addEventListener('click', (e) => {
     if (!exportMenu.contains(e.target) && e.target !== exportBtn) {
-      exportMenu.style.display = 'none';
+      exportMenu.classList.remove('show');
     }
   });
   
   // Prevent menu from closing when clicking inside it
   exportMenu.addEventListener('click', (e) => {
     e.stopPropagation();
-  });
-  
-  // Add hover effects to menu items
-  const menuItems = exportMenu.querySelectorAll('button');
-  menuItems.forEach(item => {
-    item.addEventListener('mouseenter', () => {
-      item.style.background = '#f3f4f6';
-    });
-    item.addEventListener('mouseleave', () => {
-      item.style.background = '#fff';
-    });
-    // Ensure buttons are clickable
-    item.style.pointerEvents = 'auto';
   });
 }
 
@@ -80,7 +66,7 @@ if (exportCsvBtn && tracks && tracks.length > 0) {
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
-      exportMenu.style.display = 'none';
+      exportMenu.classList.remove('show');
     } catch (error) {
       console.error('Error exporting CSV:', error);
       alert('Error exporting CSV. Please try again.');

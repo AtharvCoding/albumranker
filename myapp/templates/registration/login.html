@@ -1,27 +1,29 @@
 {% extends "myapp/base.html" %}
 {% block content %}
-  <div style="max-width:400px;margin:40px auto">
-    <h2>Login</h2>
+  <div style="max-width:400px;margin:60px auto">
+    <h1 style="font-size:32px;font-weight:700;margin:0 0 32px 0;text-align:center">Login</h1>
     {% if form.errors %}
-      <p style="color:crimson">Your username and password didn't match. Please try again.</p>
+      <div style="background:rgba(220,38,38,0.1);border:1px solid rgba(220,38,38,0.3);border-radius:var(--radius-md);padding:16px;color:#ef4444;margin-bottom:24px">
+        Your username and password didn't match. Please try again.
+      </div>
     {% endif %}
     
     <form method="post" action="{% url 'myapp:login' %}">
       {% csrf_token %}
-      <div style="margin-bottom:16px">
-        <label for="id_username" style="display:block;margin-bottom:6px;font-weight:600">Username:</label>
-        <input type="text" name="username" id="id_username" required style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px">
+      <div style="margin-bottom:20px">
+        <label for="id_username" style="display:block;margin-bottom:8px;font-weight:600;color:#000000">Username:</label>
+        <input type="text" name="username" id="id_username" required class="search-bar" style="width:100%;padding:12px 16px">
       </div>
-      <div style="margin-bottom:16px">
-        <label for="id_password" style="display:block;margin-bottom:6px;font-weight:600">Password:</label>
-        <input type="password" name="password" id="id_password" required style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px">
+      <div style="margin-bottom:24px">
+        <label for="id_password" style="display:block;margin-bottom:8px;font-weight:600;color:#000000">Password:</label>
+        <input type="password" name="password" id="id_password" required class="search-bar" style="width:100%;padding:12px 16px">
       </div>
       <input type="hidden" name="next" value="{{ next }}">
-      <button type="submit" style="width:100%;padding:10px;background:#111;color:#fff;border:0;border-radius:6px;cursor:pointer;font-weight:600">Login</button>
+      <button type="submit" class="btn btn-primary" style="width:100%;padding:14px">Login</button>
     </form>
     
-    <p style="margin-top:20px;text-align:center;color:#6b7280">
-      Don't have an account? <a href="{% url 'myapp:signup' %}">Sign up</a>
+    <p style="margin-top:24px;text-align:center;color:#666666">
+      Don't have an account? <a href="{% url 'myapp:signup' %}" style="color:var(--accent);text-decoration:none">Sign up</a>
     </p>
   </div>
 {% endblock %}

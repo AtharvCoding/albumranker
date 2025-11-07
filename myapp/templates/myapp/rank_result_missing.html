@@ -1,21 +1,21 @@
 {% extends "myapp/base.html" %}
 {% block content %}
-  <div style="display:flex;gap:18px;align-items:center;margin-bottom:18px;">
+  <div style="display:flex;gap:24px;align-items:center;margin-bottom:32px;">
     {% if album.image %}
-      <img src="{{ album.image }}" alt="{{ album.name }}" style="width:120px;height:120px;object-fit:cover;border-radius:8px">
+      <img src="{{ album.image }}" alt="{{ album.name }}" style="width:140px;height:140px;object-fit:cover;border-radius:var(--radius-md);box-shadow:var(--shadow-md);flex-shrink:0">
     {% endif %}
     <div>
-      <h2>{{ album.name }}</h2>
-      <p style="color:#6b7280">{{ album.artist }} • Tracks: {{ tracks_count }}</p>
+      <h1 style="font-size:32px;font-weight:700;margin:0 0 8px 0;color:#000000">{{ album.name }}</h1>
+      <p style="color:#666666;margin:0;font-size:18px">{{ album.artist }} • {{ tracks_count }} tracks</p>
     </div>
   </div>
 
-  <div style="padding:20px;border:1px dashed #e5e7eb;border-radius:8px">
-    <h3>No ranking found yet</h3>
-    <p class="muted">This album hasn't been ranked yet. Start a ranking session to generate the final results.</p>
-    <div style="margin-top:12px">
-      <a href="{% url 'myapp:rank' album_id=album_id %}" class="cta">Start ranking</a>
-      <a href="{% url 'myapp:search' %}" style="margin-left:8px">Search another album</a>
+  <div class="card" style="text-align:center;padding:40px">
+    <h2 style="font-size:24px;font-weight:600;margin:0 0 16px 0;color:#000000">No ranking found yet</h2>
+    <p style="color:#666666;font-size:16px;margin:0 0 24px 0">This album hasn't been ranked yet. Start a ranking session to generate the final results.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <a href="{% url 'myapp:rank' album_id=album_id %}" class="btn btn-primary">Start ranking</a>
+      <a href="{% url 'myapp:search' %}" class="btn btn-secondary">Search another album</a>
     </div>
   </div>
 {% endblock %}

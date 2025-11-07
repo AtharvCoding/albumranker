@@ -1,40 +1,61 @@
 {% extends 'myapp/base.html' %}
 
 {% block content %}
-  <h1>Search Albums</h1>
+  <div class="search-container">
+    <h1 style="font-size: 36px; font-weight: 700; margin: 0 0 40px 0; text-align: center;">Search Albums</h1>
+    
+    <form method="get" action="{% url 'myapp:search' %}" style="margin-bottom: 40px; display: flex; gap: 12px; align-items: center; justify-content: center; max-width: 500px; margin-left: auto; margin-right: auto;">
+      <input 
+        type="text" 
+        name="q" 
+        class="search-bar" 
+        placeholder="Search for an album or artist..." 
+        value="{{ query }}"
+        autofocus
+        style="flex: 1; margin: 0;"
+      >
+      <button type="submit" class="btn btn-primary" style="padding: 16px 24px; white-space: nowrap;">Search</button>
+    </form>
 
-  <form method="get" action="{% url 'myapp:search' %}">
-    <input name="q" placeholder="Album or artist (e.g. evermore taylor swift)" value="{{ query }}">
-    <button type="submit">Search</button>
-  </form>
-
-  {% if error %}
-    <p style="color:crimson">Error: {{ error }}</p>
-  {% endif %}
-
-  {% if query %}
-    <h3>Results for: "{{ query }}"</h3>
-
-    {% if albums %}
-      <div class="album-grid">
-        {% for album in albums %}
-          <!-- Entire card is a link (accessible & keyboard-friendly) -->
-          <a href="{% url 'myapp:album_detail' album.id %}" class="album-card" aria-label="View {{ album.name }} by {{ album.artist }}">
-            {% if album.image %}
-              <div class="album-thumb">
-                <img src="{{ album.image }}" alt="{{ album.name }} cover">
-              </div>
-            {% endif %}
-            <div class="album-info">
-              <h4 class="album-name">{{ album.name }}</h4>
-              <p class="album-artist">{{ album.artist }}</p>
-              <p class="album-meta">{{ album.release_date }} • {{ album.total_tracks }} tracks</p>
-            </div>
-          </a>
-        {% endfor %}
+    {% if error %}
+      <div style="background: rgba(220, 38, 38, 0.1); border: 1px solid rgba(220, 38, 38, 0.3); border-radius: var(--radius-md); padding: 16px; color: #ef4444; margin-bottom: 24px;">
+        Error: {{ error }}
       </div>
-    {% else %}
-      <p>No albums found. Try another query.</p>
     {% endif %}
-  {% endif %}
+
+    {% if query %}
+      <h2 style="font-size: 24px; font-weight: 600; margin: 0 0 24px 0; color: #666666;">
+        Results for: "{{ query }}"
+      </h2>
+
+      {% if albums %}
+        <div class="grid grid-albums">
+          {% for album in albums %}
+            <a href="{% url 'myapp:album_detail' album.id %}" class="album-card" aria-label="View {{ album.name }} by {{ album.artist }}">
+              {% if album.image %}
+                <img src="{{ album.image }}" alt="{{ album.name }} cover" class="album-cover">
+              {% else %}
+                <div class="album-cover" style="background: #f5f5f5; display: flex; align-items: center; justify-content: center; color: #666666;">
+                  No Image
+                </div>
+              {% endif %}
+              <h3>{{ album.name }}</h3>
+              <p>{{ album.artist }}</p>
+              {% if album.release_date %}
+                <p style="font-size: 12px; color: #666666; margin-top: 4px;">{{ album.release_date }}</p>
+              {% endif %}
+            </a>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty-state">
+          <p>No albums found. Try another query.</p>
+        </div>
+      {% endif %}
+    {% else %}
+      <div class="empty-state">
+        <p style="font-size: 18px;">Enter an album or artist name to start searching</p>
+      </div>
+    {% endif %}
+  </div>
 {% endblock %}

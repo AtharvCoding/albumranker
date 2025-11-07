@@ -3,56 +3,63 @@
 
 {% block content %}
   {% if error %}
-    <p style="color:crimson">Error: {{ error }}</p>
+    <div style="background: rgba(220, 38, 38, 0.1); border: 1px solid rgba(220, 38, 38, 0.3); border-radius: var(--radius-md); padding: 16px; color: #ef4444; margin-bottom: 24px;">
+      Error: {{ error }}
+    </div>
   {% endif %}
 
   {% if album %}
-    <div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:18px">
+    <div class="album-header">
       {% if album.image %}
-        <img src="{{ album.image }}" alt="{{ album.name }}" style="width:220px;height:220px;object-fit:cover;border-radius:8px">
+        <img src="{{ album.image }}" alt="{{ album.name }}" class="album-cover-large">
       {% endif %}
-      <div>
-        <h2 style="margin:0">{{ album.name }}</h2>
-        <p style="margin:6px 0 0 0"><strong>Artist:</strong> {{ album.artist }}</p>
-        <p style="margin:4px 0 0 0"><strong>Release date:</strong> {{ album.release_date }}</p>
-        <p style="margin:4px 0 0 0"><strong>Total tracks:</strong> {{ album.total_tracks }}</p>
-
-      <!-- replace existing Start ranking button with this -->
-        <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
-          <a href="{% url 'myapp:rank' album_id=album.id %}"
-             class="cta"
-            style="padding:8px 12px;background:#111;color:#fff;border-radius:6px;text-decoration:none;display:inline-block">
+      <div class="album-info">
+        <h1>{{ album.name }}</h1>
+        <h2>{{ album.artist }}</h2>
+        <div class="album-meta">
+          {% if album.release_date %}
+            <p style="margin: 0 0 8px 0;">Release date: {{ album.release_date }}</p>
+          {% endif %}
+          <p style="margin: 0;">Total tracks: {{ album.total_tracks }}</p>
+        </div>
+        <div class="album-actions">
+          <a href="{% url 'myapp:rank' album_id=album.id %}" class="btn btn-primary">
             Start ranking
           </a>
           {% if user.is_authenticated %}
-            <button id="save-album-btn" data-album-id="{{ album_id }}" style="padding:8px 12px;background:#e5e7eb;color:#111;border:0;border-radius:6px;cursor:pointer">
+            <button id="save-album-btn" data-album-id="{{ album_id }}" class="btn btn-secondary">
               {% if saved %}✓ Saved{% else %}Save to My Music{% endif %}
             </button>
           {% else %}
-            <a href="{% url 'myapp:login' %}?next={% url 'myapp:album_detail' album_id %}" style="padding:8px 12px;background:#e5e7eb;color:#111;border-radius:6px;text-decoration:none">Save to My Music</a>
+            <a href="{% url 'myapp:login' %}?next={% url 'myapp:album_detail' album_id %}" class="btn btn-secondary">Save to My Music</a>
           {% endif %}
         </div>
       </div>
     </div>
 
-    <hr style="margin:18px 0">
-
-  <h3>Tracklist</h3>
-    <div style="margin-top:10px">
-  {% for t in tracks %}
-    <div style="margin:6px 0; display:flex; align-items:center;">
-      <span style="width:30px; text-align:right; font-weight:bold; margin-right:8px;">
-        {{ t.track_number }}.
-      </span>
-      <span>{{ t.name }}</span>
-      <span style="color:#666; margin-left:8px;">— {{ t.duration }}</span>
+    <div class="tracklist">
+      <div class="tracklist-header">
+        <div style="display: grid; grid-template-columns: 40px 1fr 80px; gap: 16px; padding: 0 16px;">
+          <span>#</span>
+          <span>Title</span>
+          <span style="text-align: right;">Duration</span>
+        </div>
+      </div>
+      {% for t in tracks %}
+        <div class="track-row">
+          <span class="rank" style="width: 40px; text-align: center;">{{ t.track_number }}</span>
+          <div class="track-info">
+            <div class="track-name">{{ t.name }}</div>
+          </div>
+          <span style="color: #666666; width: 80px; text-align: right;">{{ t.duration }}</span>
+        </div>
+      {% endfor %}
     </div>
-    {% endfor %}
-    </div>
-
 
   {% else %}
-    <p>Album not found.</p>
+    <div class="empty-state">
+      <p>Album not found.</p>
+    </div>
   {% endif %}
   {% if user.is_authenticated %}
     <script src="{% static 'myapp/js/album_detail.js' %}"></script>

@@ -4,34 +4,37 @@
   <head>
     <meta charset="utf-8" />
     <title>AlbumRanker</title>
+    <link rel="stylesheet" href="{% static 'myapp/css/theme.css' %}">
     <link rel="stylesheet" href="{% static 'myapp/css/main.css' %}">
     <meta name="viewport" content="width=device-width,initial-scale=1">
   </head>
   <body>
-    <header style="padding:12px;background:#111;color:#fff;display:flex;justify-content:space-between;align-items:center">
-      <div>
-        <a href="{% url 'myapp:landing' %}" style="color:#fff;text-decoration:none;font-weight:700">AlbumRanker</a>
-        <a href="{% url 'myapp:search' %}" style="margin-left:18px;color:#fff;text-decoration:none">Search</a>
-        {% if user.is_authenticated %}
-          <a href="{% url 'myapp:my_music' %}" style="margin-left:18px;color:#fff;text-decoration:none">My Music</a>
-        {% endif %}
+    <header>
+      <div class="nav-left">
+        <a href="{% url 'myapp:landing' %}" class="logo">AlbumRanker</a>
+        <div class="nav-links">
+          <a href="{% url 'myapp:search' %}">Search</a>
+          {% if user.is_authenticated %}
+            <a href="{% url 'myapp:my_music' %}">My Music</a>
+          {% endif %}
+        </div>
       </div>
-      <div>
+      <div class="nav-right">
         {% if user.is_authenticated %}
-          <span style="margin-right:12px">Hello, {{ user.username }}</span>
-          <form method="post" action="{% url 'myapp:logout' %}" style="display:inline">
+          <span class="user-info">Hello, {{ user.username }}</span>
+          <form method="post" action="{% url 'myapp:logout' %}">
             {% csrf_token %}
-            <button type="submit" style="background:none;border:none;color:#fff;text-decoration:none;cursor:pointer;padding:0;font-size:inherit">Logout</button>
+            <button type="submit">Logout</button>
           </form>
         {% else %}
-          <a href="{% url 'myapp:login' %}" style="color:#fff;text-decoration:none">Login</a>
-          <a href="{% url 'myapp:signup' %}" style="margin-left:12px;color:#fff;text-decoration:none">Sign Up</a>
+          <a href="{% url 'myapp:login' %}">Login</a>
+          <a href="{% url 'myapp:signup' %}">Sign Up</a>
         {% endif %}
       </div>
     </header>
-    <main style="padding:24px;max-width:1000px;margin:0 auto">
+    <main>
       {% block content %}{% endblock %}
     </main>
-    <footer style="padding:12px;text-align:center;color:#666">Made with ♥ — AlbumRanker</footer>
+    <footer>Made with ♥ — AlbumRanker</footer>
   </body>
 </html>
