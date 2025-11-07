@@ -8,14 +8,10 @@
     <div style="flex:1">
       <h2>{{ album.name }}</h2>
       <p style="color:#6b7280">{{ album.artist }}</p>
+      {% if user.is_authenticated and saved %}
+        <p style="margin-top:8px;color:#10b981;font-size:14px">✓ Saved to My Music</p>
+      {% endif %}
       <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
-        {% if user.is_authenticated %}
-          <button id="save-btn" data-album-id="{{ album_id }}" style="padding:8px 14px;background:#111;color:#fff;border:0;border-radius:6px;cursor:pointer;font-size:14px">
-            {% if saved %}✓ Saved{% else %}Save to My Music{% endif %}
-          </button>
-        {% else %}
-          <a href="{% url 'myapp:login' %}?next={% url 'myapp:rank_result' album_id %}" style="padding:8px 14px;background:#111;color:#fff;border-radius:6px;text-decoration:none;font-size:14px">Save to My Music</a>
-        {% endif %}
         <div style="position:relative;display:inline-block">
           <button id="export-btn" style="padding:8px 14px;background:#e5e7eb;color:#111;border:0;border-radius:6px;cursor:pointer;font-size:14px">Export ▼</button>
           <div id="export-menu" style="display:none;position:absolute;top:100%;left:0;margin-top:4px;background:#fff;border:1px solid #ddd;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,0.1);z-index:10;min-width:120px">
@@ -31,7 +27,7 @@
   <ol id="ranking-list">
     {% for track in ordered_tracks %}
       <li style="margin:6px 0" data-track-id="{{ track.id }}" data-track-name="{{ track.name }}" data-duration-ms="{{ track.duration_ms }}">
-        <strong>{{ forloop.counter }}.</strong> {{ track.name }}
+        {{ track.name }}
         <small style="color:#9ca3af;margin-left:8px;">{{ track.duration_formatted }}</small>
       </li>
     {% endfor %}

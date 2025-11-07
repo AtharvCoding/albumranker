@@ -1,4 +1,4 @@
-// rank_result.js - Handle save, export functionality
+// rank_result.js - Handle export functionality
 
 function getCookie(name) {
   let cookieValue = null;
@@ -13,58 +13,6 @@ function getCookie(name) {
     }
   }
   return cookieValue;
-}
-
-// Save button handler
-if (document.getElementById('save-btn')) {
-  const saveBtn = document.getElementById('save-btn');
-  saveBtn.addEventListener('click', async () => {
-    const token = csrfToken || getCookie('csrftoken');
-    if (saved) {
-      // Unsave
-      try {
-        const response = await fetch(`/api/unsave-album/${albumId}/`, {
-          method: 'POST',
-          headers: {
-            'X-CSRFToken': token,
-            'Content-Type': 'application/json',
-          },
-        });
-        if (response.ok) {
-          saveBtn.textContent = 'Save to My Music';
-          saveBtn.style.background = '#111';
-          window.saved = false;
-        }
-      } catch (e) {
-        alert('Error unsaving album');
-      }
-    } else {
-      // Save with ranking data
-      try {
-        const response = await fetch(`/api/save-album/${albumId}/`, {
-          method: 'POST',
-          headers: {
-            'X-CSRFToken': token,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            ordered_ids: orderedIds,
-            comparisons_count: comparisonsCount,
-          }),
-        });
-        if (response.ok) {
-          const data = await response.json();
-          if (data.success) {
-            saveBtn.textContent = '✓ Saved';
-            saveBtn.style.background = '#10b981';
-            window.saved = true;
-          }
-        }
-      } catch (e) {
-        alert('Error saving album');
-      }
-    }
-  });
 }
 
 // Export menu toggle
