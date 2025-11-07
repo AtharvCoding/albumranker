@@ -21,20 +21,20 @@
       </div>
       <div class="nav-right">
         {% if user.is_authenticated %}
-          <span class="user-info">Hello, {{ user.username }}</span>
+          <span class="user-info" style="font-weight: bold;">Hello, {{ user.username }}</span>
           <form method="post" action="{% url 'myapp:logout' %}">
             {% csrf_token %}
             <button type="submit">Logout</button>
           </form>
         {% else %}
-          <a href="{% url 'myapp:login' %}">Login</a>
-          <a href="{% url 'myapp:signup' %}">Sign Up</a>
+          <a href="{% url 'myapp:login' %}" style="color: white;">Login</a>
+          <a href="{% url 'myapp:signup' %}" style="color: white  ;">Sign Up</a>
         {% endif %}
       </div>
     </header>
     <main>
       {% block content %}{% endblock %}
     </main>
-    <footer>Made with ♥ — AlbumRanker</footer>
+    <footer>Made with ♥ — Atharv</footer>
   </body>
 </html>
