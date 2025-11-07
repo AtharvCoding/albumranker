@@ -14,9 +14,9 @@
       <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
         <div style="position:relative;display:inline-block">
           <button id="export-btn" style="padding:8px 14px;background:#e5e7eb;color:#111;border:0;border-radius:6px;cursor:pointer;font-size:14px">Export ▼</button>
-          <div id="export-menu" style="display:none;position:absolute;top:100%;left:0;margin-top:4px;background:#fff;border:1px solid #ddd;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,0.1);z-index:10;min-width:120px">
-            <button id="export-csv" style="display:block;width:100%;padding:8px 12px;text-align:left;background:none;border:0;cursor:pointer;font-size:14px">Export CSV</button>
-            <button id="export-png" style="display:block;width:100%;padding:8px 12px;text-align:left;background:none;border:0;cursor:pointer;font-size:14px;border-top:1px solid #eee">Export PNG</button>
+          <div id="export-menu" style="display:none;position:absolute;top:100%;left:0;margin-top:4px;background:#fff;border:1px solid #ddd;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,0.15);z-index:1000;min-width:180px;overflow:visible">
+            <button id="export-csv" type="button" style="display:block;width:100%;padding:12px 16px;text-align:left;background:#fff;border:0;cursor:pointer;font-size:14px;color:#111;transition:background 0.2s;font-family:inherit">Export as CSV</button>
+            <button id="export-png" type="button" style="display:block;width:100%;padding:12px 16px;text-align:left;background:#fff;border:0;border-top:1px solid #eee;cursor:pointer;font-size:14px;color:#111;transition:background 0.2s;font-family:inherit">Export as Image</button>
           </div>
         </div>
       </div>
