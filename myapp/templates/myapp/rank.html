@@ -86,6 +86,10 @@
 </script>
 
 <script>
+  const USER_AUTHENTICATED = {{ user_authenticated|yesno:"true,false" }};
+</script>
+
+<script>
 /*
   Full client-side ranking driver + submit logic
   - Binary-insert algorithm (insertion via binary search)
@@ -250,7 +254,8 @@ function submitResults() {
       album_id: ALBUM_ID,
       ordered_ids: state.ordered.map(t => t.id),
       comparisons: state.comparisons,
-      comparisons_count: state.comparisons.length
+      comparisons_count: state.comparisons.length,
+      save_after_submit: USER_AUTHENTICATED  // Auto-save if authenticated
     };
     console.debug("Submitting payload", payload);
     fetch(SUBMIT_URL, {

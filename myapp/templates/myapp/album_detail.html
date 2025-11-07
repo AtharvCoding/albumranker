@@ -1,4 +1,5 @@
 {% extends 'myapp/base.html' %}
+{% load static %}
 
 {% block content %}
   {% if error %}
@@ -17,11 +18,20 @@
         <p style="margin:4px 0 0 0"><strong>Total tracks:</strong> {{ album.total_tracks }}</p>
 
       <!-- replace existing Start ranking button with this -->
-        <a href="{% url 'myapp:rank' album_id=album.id %}"
-           class="cta"
-          style="padding:8px 12px;background:#111;color:#fff;border-radius:6px;text-decoration:none;display:inline-block">
-          Start ranking
-        </a>
+        <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+          <a href="{% url 'myapp:rank' album_id=album.id %}"
+             class="cta"
+            style="padding:8px 12px;background:#111;color:#fff;border-radius:6px;text-decoration:none;display:inline-block">
+            Start ranking
+          </a>
+          {% if user.is_authenticated %}
+            <button id="save-album-btn" data-album-id="{{ album_id }}" style="padding:8px 12px;background:#e5e7eb;color:#111;border:0;border-radius:6px;cursor:pointer">
+              {% if saved %}✓ Saved{% else %}Save to My Music{% endif %}
+            </button>
+          {% else %}
+            <a href="{% url 'myapp:login' %}?next={% url 'myapp:album_detail' album_id %}" style="padding:8px 12px;background:#e5e7eb;color:#111;border-radius:6px;text-decoration:none">Save to My Music</a>
+          {% endif %}
+        </div>
       </div>
     </div>
 
@@ -43,5 +53,8 @@
 
   {% else %}
     <p>Album not found.</p>
+  {% endif %}
+  {% if user.is_authenticated %}
+    <script src="{% static 'myapp/js/album_detail.js' %}"></script>
   {% endif %}
 {% endblock %}

@@ -1,0 +1,46 @@
+{% extends "myapp/base.html" %}
+{% block content %}
+  <div style="max-width:400px;margin:40px auto">
+    <h2>Sign Up</h2>
+    
+    <form method="post">
+      {% csrf_token %}
+      {% if form.errors %}
+        <div style="color:crimson;margin-bottom:16px">
+          {% for field in form %}
+            {% for error in field.errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          {% endfor %}
+          {% for error in form.non_field_errors %}
+            <p>{{ error }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+      
+      <div style="margin-bottom:16px">
+        <label for="id_username" style="display:block;margin-bottom:6px;font-weight:600">Username:</label>
+        <input type="text" name="username" id="id_username" required maxlength="150" autofocus style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px">
+        <small style="color:#6b7280">Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.</small>
+      </div>
+      
+      <div style="margin-bottom:16px">
+        <label for="id_password1" style="display:block;margin-bottom:6px;font-weight:600">Password:</label>
+        <input type="password" name="password1" id="id_password1" required style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px">
+      </div>
+      
+      <div style="margin-bottom:16px">
+        <label for="id_password2" style="display:block;margin-bottom:6px;font-weight:600">Password confirmation:</label>
+        <input type="password" name="password2" id="id_password2" required style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px">
+        <small style="color:#6b7280">Enter the same password as before, for verification.</small>
+      </div>
+      
+      <button type="submit" style="width:100%;padding:10px;background:#111;color:#fff;border:0;border-radius:6px;cursor:pointer;font-weight:600">Sign Up</button>
+    </form>
+    
+    <p style="margin-top:20px;text-align:center;color:#6b7280">
+      Already have an account? <a href="{% url 'myapp:login' %}">Log in</a>
+    </p>
+  </div>
+{% endblock %}
+
