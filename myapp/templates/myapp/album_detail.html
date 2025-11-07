@@ -22,7 +22,7 @@
           {% endif %}
           <p style="margin: 0;">Total tracks: {{ album.total_tracks }}</p>
         </div>
-        <div class="album-actions">
+        <div class="album-actions" style="margin-top: 16px;">
           <a href="{% url 'myapp:rank' album_id=album.id %}" class="btn btn-primary">
             Start ranking
           </a>
